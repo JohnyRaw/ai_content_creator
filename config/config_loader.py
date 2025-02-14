@@ -1,25 +1,16 @@
 import configparser
+import os
 
-# Создаём объект для чтения config.ini
 config = configparser.ConfigParser()
-config.read("config.ini")
 
 
 def get_config(section, key):
-    """Возвращает значение параметра из config.ini.
+    config_path = os.path.join(os.path.dirname(__file__), "config.ini")
+    if not config.read(config_path):
+        raise Exception("Ошибка: файл config.ini не найден или пуст.")
 
-    Args:
-        section (str): Секция в config.ini (например, "bot").
-        key (str): Ключ в этой секции (например, "bot_token").
-
-    Returns:
-        str: Значение параметра.
-
-    Raises:
-        KeyError: Если ключ или секция отсутствует.
-    """
-    try:
-        return config[section][key]
-    except KeyError:
+    if section not in config or key not in config[section]:
         raise Exception(
             f"Ошибка: параметр [{section}] -> {key} не найден в config.ini")
+
+    return config[section][key]
